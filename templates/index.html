@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed to Scale — Venture Architecture</title>
+   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div id="auth-overlay" class="auth-overlay">
+    <div class="auth-wrap">
+        <div class="auth-left">
+            <div class="auth-brand">
+                <div class="auth-brand-name">Seed<em>to</em><br>Scale</div>
+                <div class="auth-brand-tag">Multi-Agent Venture Architecture</div>
+            </div>
+            <div class="auth-features">
+                <div class="auth-feature">
+                    <div class="auth-feature-icon">🔬</div>
+                    <div class="auth-feature-text">
+                        <strong>AI Market Research</strong>
+                        Deep competitive analysis with structured market data
+                    </div>
+                </div>
+                <div class="auth-feature">
+                    <div class="auth-feature-icon">⚡</div>
+                    <div class="auth-feature-text">
+                        <strong>Technical Pivot Engine</strong>
+                        Capital-efficient strategies audited for seed stage
+                    </div>
+                </div>
+                <div class="auth-feature">
+                    <div class="auth-feature-icon">📋</div>
+                    <div class="auth-feature-text">
+                        <strong>Investor-Grade Manifesto</strong>
+                        Ready  with roadmap and risk analysis
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="auth-right">
+            <div class="auth-title" id="auth-heading">Welcome back</div>
+            <div class="auth-subtitle" id="auth-subheading">Sign in to your account to continue</div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+                <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+            </div>
+            <div id="name-group" class="form-group" style="display:none">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="auth-name" class="auth-input" placeholder="Enter name" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="auth-email" class="auth-input" placeholder="you@email.com" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="auth-password" class="auth-input" placeholder="Min. 6 characters" />
+            </div>
+            <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
+            <div id="auth-msg" class="auth-msg"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HISTORY DRAWER ===== -->
+<div id="drawer-overlay" class="drawer-overlay" onclick="handleDrawerOverlayClick(event)">
+    <div class="history-drawer" id="history-drawer">
+        <div class="drawer-header">
+            <span class="drawer-title">Analysis History</span>
+            <button class="drawer-close" onclick="closeHistory()">✕</button>
+        </div>
+        <div class="drawer-body" id="drawer-body">
+            <div class="drawer-empty">
+                <div class="drawer-empty-icon">📂</div>
+                <div class="drawer-empty-text">Loading your history...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PROFILE MODAL ===== -->
+<div id="profile-overlay" class="modal-overlay" onclick="handleProfileOverlayClick(event)">
+    <div class="profile-modal">
+        <div class="profile-header">
+            <button class="profile-modal-close" onclick="closeProfile()">✕</button>
+            <div class="profile-avatar-lg" id="profile-avatar-lg">?</div>
+            <div class="profile-name-lg" id="profile-name-lg">—</div>
+            <div class="profile-email-lg" id="profile-email-lg">—</div>
+        </div>
+        <div class="profile-body">
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-val" id="profile-stat-analyses">0</div>
+                    <div class="profile-stat-label">Analyses</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-val" id="profile-stat-joined">—</div>
+                    <div class="profile-stat-label">Member Since</div>
+                </div>
+            </div>
+            <button class="profile-action-btn btn-danger" onclick="confirmDeleteAccount()">
+                ⚠️ Delete My Account
+            </button>
+            <button class="profile-action-btn btn-ghost" onclick="logout()">
+                → Sign Out
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CONFIRM DIALOG ===== -->
+<div id="confirm-overlay" class="confirm-overlay">
+    <div class="confirm-dialog">
+        <div class="confirm-icon" id="confirm-icon">⚠️</div>
+        <div class="confirm-title" id="confirm-title">Are you sure?</div>
+        <div class="confirm-desc" id="confirm-desc">This action cannot be undone.</div>
+        <div class="confirm-actions">
+            <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+            <button class="confirm-ok" id="confirm-ok-btn" onclick="executeConfirmAction()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="app" id="main-app">
+    <nav class="topbar">
+        <div class="topbar-brand">
+            <span class="topbar-logo">Seed<em>to</em>Scale</span>
+           
+        </div>
+        <div class="topbar-right">
+            <button class="new-btn" onclick="newAnalysis()" title="New Analysis">+</button>
+            <button class="topbar-btn" onclick="openHistory()">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                History
+            </button>
+            <div class="status-badge">
+                <div class="status-dot" id="status-dot"></div>
+                <span class="status-text" id="status-text">Ready</span>
+            </div>
+            <div class="user-avatar" id="user-avatar-btn" onclick="openProfile()" title="Profile">?</div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-label">Multi-Agent Systems</div>
+        <div class="hero-title">Turn your idea into an<br><span>investor-ready </span></div>
+        <div class="hero-desc">Describe your startup concept below.</div>
+        <div class="input-wrap">
+            <input type="text" class="idea-input" id="idea-input" placeholder="Enter your startup concept..." />
+            <button class="run-btn" id="run-btn" onclick="runPipeline()">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Analyze
+            </button>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <!-- Log Panel -->
+        <div class="log-panel">
+            <div class="panel-header">
+                <span class="panel-title">Agent Log</span>
+                <span class="timer-badge" id="timer">0.0s</span>
+            </div>
+            <div class="log-body" id="log-body">
+                <div class="log-placeholder">
+                    <div class="log-placeholder-icon">🤖</div>
+                    <div class="log-placeholder-text">Awaiting input…</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="output-panel">
+            <div class="output-empty-state" id="output-empty">
+                <div class="empty-icon">✦</div>
+                <div class="empty-title">No analysis yet</div>
+                <div class="empty-desc">Enter your startup concept above and hit Analyze to generate your venture .</div>
+            </div>
+
+            <div class="output-body" id="output-body">
+                <div class="output-header">
+                    <div class="output-number" id="out-number">Analysis #—</div>
+                    <div class="output-concept-title" id="out-title">—</div>
+                    <div class="output-badges" id="out-badges"></div>
+                </div>
+                <div class="metrics-section">
+                    <div class="metric-cell">
+                        <div class="metric-key">Market Size</div>
+                        <div class="metric-val" id="met-market">—</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-key">MVP Timeline</div>
+                        <div class="metric-val" id="met-mvp">—</div>
+                        <div class="metric-sub">weeks</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-key">Iterations</div>
+                        <div class="metric-val" id="met-iter">—</div>
+                    </div>
+                </div>
+                <div class="strategy-section">
+                    <div class="section-header">
+                        <div class="section-icon indigo">⚡</div>
+                        <span class="section-title">Technical Pivot</span>
+                    </div>
+                    <div class="pivot-name" id="out-pivot-title">—</div>
+                    <div class="pivot-hook" id="out-pivot-hook">—</div>
+                    <div class="pivot-tags" id="out-tech-tags"></div>
+                </div>
+                <div class="research-section">
+                    <div class="section-header">
+                        <div class="section-icon amber">🔬</div>
+                        <span class="section-title">Market Intelligence</span>
+                    </div>
+                    <div class="research-grid" id="research-grid"></div>
+                </div>
+                <div class="manifesto-section">
+                    <div class="section-header">
+                        <div class="section-icon emerald">📋</div>
+                        <span class="section-title">Investment </span>
+                    </div>
+                    <div class="manifesto-body" id="out-manifesto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/script.js"></script>
+</body>
+</html>
